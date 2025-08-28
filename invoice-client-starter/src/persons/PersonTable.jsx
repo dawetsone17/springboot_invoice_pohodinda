@@ -37,7 +37,6 @@ const PersonTable = ({label, items, deletePerson}) => {
                                 </Link>
                                 <button
                                     onClick={() => {
-                                        // Zde je úprava: potvrdit smazání před voláním funkce
                                         if (window.confirm("Opravdu chcete tuto osobu smazat?")) {
                                             deletePerson(item.id);
                                         }

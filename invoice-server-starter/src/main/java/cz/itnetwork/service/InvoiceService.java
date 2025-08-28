@@ -2,20 +2,54 @@ package cz.itnetwork.service;
 
 import cz.itnetwork.dto.InvoiceDTO;
 import cz.itnetwork.dto.InvoiceStatisticsDTO;
-import cz.itnetwork.dto.PersonStatisticsDTO;
 
 import java.util.List;
 import java.util.Map;
 
 public interface InvoiceService {
+
+    /**
+     * Přidá novou fakturu.
+     */
     InvoiceDTO addInvoice(InvoiceDTO invoiceDTO);
 
-    // Metoda pro získání všech faktur s volitelnými filtry
+    /**
+     * Vrátí seznam všech faktur s volitelnými filtry.
+     */
     List<InvoiceDTO> getInvoices(Map<String, String> filterParams);
 
+    /**
+     * Vrátí detail faktury podle ID.
+     */
     InvoiceDTO getInvoiceDetail(Long invoiceId);
+
+    /**
+     * Smaže fakturu podle ID.
+     */
     void deleteInvoice(Long invoiceId);
+
+    /**
+     * Aktualizuje existující fakturu.
+     */
     InvoiceDTO updateInvoice(Long invoiceId, InvoiceDTO invoiceDTO);
+
+    /**
+     * Vrátí statistiky všech faktur.
+     */
     InvoiceStatisticsDTO getInvoiceStatistics();
 
-    }
+    /**
+     * Vrátí ID poslední faktury (pokud existuje).
+     */
+    Long findLastInvoiceId();
+
+    /**
+     * Vrátí další volné číslo faktury ve formátu např. 20250801.
+     */
+    String getNextInvoiceNumber();
+
+    /**
+     * Vrátí seznam jedinečných názvů produktů z databáze.
+     */
+    List<String> getProducts();
+}

@@ -24,7 +24,7 @@ const PersonDetail = () => {
                 const personData = await personResponse.json();
                 setPerson(personData);
 
-                // Načtení faktur (pokud existuje identificationNumber)
+                // Načtení faktur (pokud existuje podle id)
                 if (personData.identificationNumber) {
                     const salesResponse = await fetch(`http://localhost:8080/api/identification/${personData.identificationNumber}/sales`);
                     const salesData = await salesResponse.json();
@@ -110,7 +110,7 @@ const PersonDetail = () => {
                         <tr key={invoice.id}>
                             <td>{invoice.invoiceNumber}</td>
                             <td>
-                                {/* Zde je opravená logika pro vykreslení kupujícího */}
+                            
                                 {invoice.buyer && invoice.buyer.name ? (
                                     <Link to={`/persons/show/${invoice.buyer.id}`}>
                                         {invoice.buyer.name}
@@ -144,7 +144,6 @@ const PersonDetail = () => {
                         <tr key={invoice.id}>
                             <td>{invoice.invoiceNumber}</td>
                             <td>
-                                {/* Zde je opravená logika pro vykreslení prodávajícího */}
                                 {invoice.seller && invoice.seller.name ? (
                                     <Link to={`/persons/show/${invoice.seller.id}`}>
                                         {invoice.seller.name}

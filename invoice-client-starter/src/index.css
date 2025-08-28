@@ -66,3 +66,236 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* -------------------- Formulář pro faktury a index -------------------- */
+.invoice-form-container,
+.invoice-index-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+.loading-container,
+.error-container {
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.2rem;
+    color: #555;
+}
+
+.invoice-form-container h1,
+.invoice-index-container h1 {
+    text-align: center;
+    color: #333;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
+/* -------------------- Filtry a statistiky -------------------- */
+.statistics-container,
+.filter-container {
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    margin-bottom: 2rem;
+}
+
+.statistics-container h3,
+.filter-container h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.statistics-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.statistics-row p {
+    margin: 0;
+    font-size: 1rem;
+    color: #555;
+}
+
+.statistics-row p strong {
+    color: #007bff;
+}
+
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+}
+
+.filter-form .filter-label {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.95rem;
+    color: #555;
+    min-width: 150px;
+}
+
+/* -------------------- Styly pro inputy a selecty -------------------- */
+.filter-form input,
+.filter-form select,
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    width: 100%; /* Změněno na 100% pro lepší responsivitu */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.filter-form input:focus,
+.filter-form select:focus,
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.filter-form select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="%23495057" d="M7.247 11.14 2.451 5.613a.5.5 0 0 1 .386-.879h9.22a.5.5 0 0 1 .386.879L8.753 11.14a.5.5 0 0 1-.706 0z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    padding-right: 2.5rem;
+}
+
+.filter-form option,
+.form-group option {
+    font-size: 1rem;
+    color: #495057;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.form-group label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.form-group.error input,
+.form-group.error select,
+.form-group.error textarea {
+    border-color: #dc3545;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    position: absolute;
+    bottom: -1.2rem;
+    left: 0;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+button[type="submit"] {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 2rem;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.calculated-values {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.calculated-vat-amount {
+    margin: 0;
+    font-size: 1rem;
+    color: #555;
+}
+
+.calculated-total-price {
+    margin: 0.5rem 0 0;
+    font-size: 1.25rem;
+    font-weight: normal;
+    color: #000000;
+}
+
+
+.form-group-inline {
+    margin-bottom: 1.5rem;
+}
+
+.form-group-inline > label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #555;
+    font-size: 0.95rem;
+    display: block;
+}
+
+.form-group-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-group-row .form-group {
+    flex-grow: 1;
+    margin-bottom: 0;
+}
+
+.form-group-row .form-group.bank-code-group {
+    flex-grow: 0;
+    width: 8rem;
+}
+
+.form-group-row .separator {
+    font-size: 1.5rem;
+    color: #999;
+}

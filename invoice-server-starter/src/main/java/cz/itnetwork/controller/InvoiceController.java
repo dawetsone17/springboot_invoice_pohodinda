@@ -22,7 +22,6 @@ public class InvoiceController {
         return invoiceService.addInvoice(invoiceDTO);
     }
 
-    // Upravený endpoint pro získání faktur s filtry
     @GetMapping
     public List<InvoiceDTO> getInvoices(@RequestParam Map<String, String> filterParams) {
         return invoiceService.getInvoices(filterParams);
@@ -44,9 +43,18 @@ public class InvoiceController {
         invoiceService.deleteInvoice(id);
     }
 
-    // Nový endpoint pro statistiky faktur
     @GetMapping("/statistics")
     public InvoiceStatisticsDTO getInvoiceStatistics() {
         return invoiceService.getInvoiceStatistics();
+    }
+
+    @GetMapping("/next-number")
+    public String getNextInvoiceNumber() {
+        return invoiceService.getNextInvoiceNumber();
+    }
+
+    @GetMapping("/products") // Nový endpoint pro produkty
+    public List<String> getProducts() {
+        return invoiceService.getProducts();
     }
 }

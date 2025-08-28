@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
 import java.time.LocalDate;
 
 @Entity
@@ -15,7 +16,8 @@ public class InvoiceEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int invoiceNumber;
+    // Opraveno: z int na String kvůli formátu F00001, F00002...
+    private String invoiceNumber;
 
     @ManyToOne
     @JoinColumn(name = "seller_id")
@@ -31,6 +33,7 @@ public class InvoiceEntity {
     private Long price;
     private int vat;
     private String note;
+    private boolean deleted;
 
     public Long getId() {
         return id;
@@ -40,11 +43,11 @@ public class InvoiceEntity {
         this.id = id;
     }
 
-    public int getInvoiceNumber() {
+    public String getInvoiceNumber() {
         return invoiceNumber;
     }
 
-    public void setInvoiceNumber(int invoiceNumber) {
+    public void setInvoiceNumber(String invoiceNumber) {
         this.invoiceNumber = invoiceNumber;
     }
 
@@ -110,5 +113,13 @@ public class InvoiceEntity {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

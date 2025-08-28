@@ -13,6 +13,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -22,6 +24,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
+
+    private static final Logger logger = LoggerFactory.getLogger(InvoiceServiceImpl.class);
 
     @Autowired
     private InvoiceRepository invoiceRepository;
@@ -35,25 +39,20 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     @Transactional
     public InvoiceDTO addInvoice(InvoiceDTO invoiceDTO) {
-        // We're expecting a full PersonDTO object with an ID from the frontend.
-        // We check for null to prevent a NullPointerException.
         if (invoiceDTO.getSeller() == null || invoiceDTO.getBuyer() == null) {
             throw new IllegalArgumentException("Seller and Buyer must be provided.");
         }
 
-        // Get the managed entities for seller and buyer from the database.
         PersonEntity seller = personRepository.findById(invoiceDTO.getSeller().getId())
                 .orElseThrow(() -> new NotFoundException("Prodávající s ID " + invoiceDTO.getSeller().getId() + " nebyl nalezen."));
 
         PersonEntity buyer = personRepository.findById(invoiceDTO.getBuyer().getId())
                 .orElseThrow(() -> new NotFoundException("Kupující s ID " + invoiceDTO.getBuyer().getId() + " nebyl nalezen."));
 
-        // Map the DTO to the entity and set the relationships.
         InvoiceEntity newInvoice = invoiceMapper.toEntity(invoiceDTO);
         newInvoice.setSeller(seller);
         newInvoice.setBuyer(buyer);
 
-        // Save and return the DTO.
         InvoiceEntity savedInvoice = invoiceRepository.save(newInvoice);
         return invoiceMapper.toDTO(savedInvoice);
     }
@@ -72,15 +71,13 @@ public class InvoiceServiceImpl implements InvoiceService {
                 long maxPrice = Long.parseLong(filterParams.get("maxPrice"));
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("price"), maxPrice));
             }
-            // The frontend is sending buyerId/sellerId as separate parameters, so the filter logic is correct here.
-            // The issue was in add/update, which expected the ID nested in the DTO.
-            if (filterParams.get("buyerId") != null && !filterParams.get("buyerId").isEmpty()) {
-                long buyerId = Long.parseLong(filterParams.get("buyerId"));
-                predicates.add(criteriaBuilder.equal(root.get("buyer").get("id"), buyerId));
+            if (filterParams.get("buyerIdentificationNumber") != null && !filterParams.get("buyerIdentificationNumber").isEmpty()) {
+                String buyerIN = filterParams.get("buyerIdentificationNumber");
+                predicates.add(criteriaBuilder.equal(root.get("buyer").get("identificationNumber"), buyerIN));
             }
-            if (filterParams.get("sellerId") != null && !filterParams.get("sellerId").isEmpty()) {
-                long sellerId = Long.parseLong(filterParams.get("sellerId"));
-                predicates.add(criteriaBuilder.equal(root.get("seller").get("id"), sellerId));
+            if (filterParams.get("sellerIdentificationNumber") != null && !filterParams.get("sellerIdentificationNumber").isEmpty()) {
+                String sellerIN = filterParams.get("sellerIdentificationNumber");
+                predicates.add(criteriaBuilder.equal(root.get("seller").get("identificationNumber"), sellerIN));
             }
             if (filterParams.get("product") != null && !filterParams.get("product").isEmpty()) {
                 String product = filterParams.get("product");
@@ -118,7 +115,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         InvoiceEntity existingInvoice = invoiceRepository.findById(invoiceId)
                 .orElseThrow(() -> new NotFoundException("Faktura s ID " + invoiceId + " nebyla nalezena."));
 
-        // Check for null to prevent NullPointerException
         if (invoiceDTO.getSeller() == null || invoiceDTO.getBuyer() == null) {
             throw new IllegalArgumentException("Seller and Buyer must be provided.");
         }
@@ -129,7 +125,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         PersonEntity buyer = personRepository.findById(invoiceDTO.getBuyer().getId())
                 .orElseThrow(() -> new NotFoundException("Kupující s ID " + invoiceDTO.getBuyer().getId() + " nebyl nalezen."));
 
-        existingInvoice.setInvoiceNumber(invoiceDTO.getInvoiceNumber());
+        existingInvoice.setInvoiceNumber(String.valueOf(invoiceDTO.getInvoiceNumber()));
         existingInvoice.setSeller(seller);
         existingInvoice.setBuyer(buyer);
         existingInvoice.setIssued(invoiceDTO.getIssued());
@@ -146,17 +142,67 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     @Transactional(readOnly = true)
     public InvoiceStatisticsDTO getInvoiceStatistics() {
-        long invoicesCount = invoiceRepository.count();
-        long allTimeSum = invoiceRepository.findAll().stream()
-                .mapToLong(InvoiceEntity::getPrice)
-                .sum();
+        try {
+            Long invoicesCount = invoiceRepository.count();
+            Long allTimeSum = invoiceRepository.calculateAllTimeSum();
+            Long currentYearSum = invoiceRepository.calculateCurrentYearSum(LocalDate.now().getYear());
 
-        int currentYear = LocalDate.now().getYear();
-        long currentYearSum = invoiceRepository.findAll().stream()
-                .filter(invoice -> invoice.getIssued().getYear() == currentYear)
-                .mapToLong(InvoiceEntity::getPrice)
-                .sum();
+            logger.info("Počet faktur: {}", invoicesCount);
+            logger.info("Celkový součet cen: {}", allTimeSum);
+            logger.info("Součet cen za aktuální rok: {}", currentYearSum);
 
-        return new InvoiceStatisticsDTO(currentYearSum, allTimeSum, invoicesCount);
+            return new InvoiceStatisticsDTO(
+                    currentYearSum != null ? currentYearSum : 0L,
+                    allTimeSum != null ? allTimeSum : 0L,
+                    invoicesCount != null ? invoicesCount : 0L
+            );
+        } catch (Exception e) {
+            logger.error("Chyba při načítání statistik faktur", e);
+            throw e;
+        }
+    }
+
+    @Override
+    public Long findLastInvoiceId() {
+        return invoiceRepository.findLastId();
+    }
+
+    @Override
+    public String getNextInvoiceNumber() {
+        try {
+            LocalDate today = LocalDate.now();
+            String year = String.valueOf(today.getYear());
+            String month = String.format("%02d", today.getMonthValue());
+
+            String prefix = year + month;
+
+            // Získání posledního pořadového čísla pro daný rok a měsíc
+            Integer lastSequenceNumber = invoiceRepository.findLastInvoiceNumberInMonth(prefix + "%")
+                    .orElse(0);
+
+            // Zvýšení pořadového čísla o 1
+            int nextSequenceNumber = lastSequenceNumber + 1;
+
+            // Dynamické formátování bez fixního počtu nul
+            String formattedSequenceNumber = String.valueOf(nextSequenceNumber);
+
+            String newInvoiceNumber = prefix + formattedSequenceNumber;
+
+            logger.info("GENERATED INVOICE NUMBER: {}", newInvoiceNumber);
+            return newInvoiceNumber;
+        } catch (Exception e) {
+            logger.error("Chyba při generování čísla faktury", e);
+            return "CHYBA";
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> getProducts() {
+        return invoiceRepository.findAll().stream()
+                .map(InvoiceEntity::getProduct)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    comments = "version: 1.5.3.Final, compiler: javac, environment: Java 17.0.16 (Microsoft)"
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.8 (Microsoft)"
 )
 @Component
 public class InvoiceMapperImpl implements InvoiceMapper {
@@ -26,12 +26,13 @@ public class InvoiceMapperImpl implements InvoiceMapper {
         invoiceDTO.setDueDate( entity.getDueDate() );
         invoiceDTO.setId( entity.getId() );
         invoiceDTO.setInvoiceNumber( entity.getInvoiceNumber() );
+        invoiceDTO.setSeller( toPersonDTO( entity.getSeller() ) );
+        invoiceDTO.setBuyer( toPersonDTO( entity.getBuyer() ) );
         invoiceDTO.setProduct( entity.getProduct() );
         invoiceDTO.setPrice( entity.getPrice() );
         invoiceDTO.setVat( entity.getVat() );
         invoiceDTO.setNote( entity.getNote() );
-        invoiceDTO.setSeller( toPersonDTO( entity.getSeller() ) );
-        invoiceDTO.setBuyer( toPersonDTO( entity.getBuyer() ) );
+        invoiceDTO.setDeleted( entity.isDeleted() );
 
         return invoiceDTO;
     }
@@ -54,6 +55,7 @@ public class InvoiceMapperImpl implements InvoiceMapper {
         invoiceEntity.setPrice( dto.getPrice() );
         invoiceEntity.setVat( dto.getVat() );
         invoiceEntity.setNote( dto.getNote() );
+        invoiceEntity.setDeleted( dto.isDeleted() );
 
         return invoiceEntity;
     }

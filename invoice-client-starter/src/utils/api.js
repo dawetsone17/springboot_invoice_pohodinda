@@ -1,9 +1,9 @@
 const API_URL = "http://localhost:8080";
 
 const fetchData = (url, requestOptions) => {
-    const apiUrl = `${API_URL}${url}`;
+    // const apiUrl = `${API_URL}${url}`; // Tento řádek je chybný a duplikuje URL
 
-    return fetch(apiUrl, requestOptions)
+    return fetch(url, requestOptions)
         .then((response) => {
             if (!response.ok) {
                 throw new Error(
@@ -28,7 +28,7 @@ export const apiGet = (url, params = {}) => {
         )
     );
 
-    let apiUrl = url;
+    let apiUrl = `${API_URL}${url}`;
     const qs = new URLSearchParams(filteredParams).toString();
     if (qs) {
         apiUrl += `?${qs}`;
@@ -48,7 +48,9 @@ export const apiPost = (url, data) => {
         body: JSON.stringify(data),
     };
 
-    return fetchData(url, requestOptions);
+    const apiUrl = `${API_URL}${url}`;
+
+    return fetchData(apiUrl, requestOptions);
 };
 
 export const apiPut = (url, data) => {
@@ -58,7 +60,9 @@ export const apiPut = (url, data) => {
         body: JSON.stringify(data),
     };
 
-    return fetchData(url, requestOptions);
+    const apiUrl = `${API_URL}${url}`;
+
+    return fetchData(apiUrl, requestOptions);
 };
 
 export const apiDelete = (url) => {
@@ -66,5 +70,7 @@ export const apiDelete = (url) => {
         method: "DELETE",
     };
 
-    return fetchData(url, requestOptions);
+    const apiUrl = `${API_URL}${url}`;
+
+    return fetchData(apiUrl, requestOptions);
 };
