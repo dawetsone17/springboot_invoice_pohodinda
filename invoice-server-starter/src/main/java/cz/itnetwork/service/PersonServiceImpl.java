@@ -11,10 +11,12 @@ import cz.itnetwork.entity.repository.PersonRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,7 +67,6 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public PersonDTO updatePerson(long personId, PersonDTO personDTO) {
-        // Správná aktualizace existujícího objektu
         PersonEntity existingPerson = fetchPersonById(personId);
         personMapper.updatePersonEntity(personDTO, existingPerson);
         return personMapper.toDTO(personRepository.save(existingPerson));
@@ -73,9 +74,10 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<PersonStatisticsDTO> getPersonStatistics() {
+    public List<PersonStatisticsDTO> getPersonStatistics(String sortColumn, String sortDirection) {
         List<PersonEntity> people = personRepository.findByHidden(false);
-        return people.stream()
+
+        List<PersonStatisticsDTO> statistics = people.stream()
                 .map(person -> {
                     long revenue = person.getSales().stream()
                             .mapToLong(InvoiceEntity::getPrice)
@@ -85,12 +87,33 @@ public class PersonServiceImpl implements PersonService {
                             .mapToLong(InvoiceEntity::getPrice)
                             .sum();
 
-                    logger.info("Statistiky pro osobu '{}' (ID: {}): Příjmy = {}, Výdaje = {}",
-                            person.getName(), person.getId(), revenue, expenses);
-
                     return new PersonStatisticsDTO(person.getId(), person.getName(), revenue, expenses);
                 })
                 .collect(Collectors.toList());
+
+        Comparator<PersonStatisticsDTO> comparator;
+        switch (sortColumn) {
+            case "name":
+                // Zde je oprava - používáme metodu getName() z DTO
+                comparator = Comparator.comparing(PersonStatisticsDTO::getName, String.CASE_INSENSITIVE_ORDER);
+                break;
+            case "revenue":
+                comparator = Comparator.comparingLong(PersonStatisticsDTO::getRevenue);
+                break;
+            case "expenses":
+                comparator = Comparator.comparingLong(PersonStatisticsDTO::getExpenses);
+                break;
+            default: // Výchozí řazení podle ID
+                comparator = Comparator.comparingLong(PersonStatisticsDTO::getPersonId);
+                break;
+        }
+
+        if ("desc".equalsIgnoreCase(sortDirection)) {
+            comparator = comparator.reversed();
+        }
+
+        statistics.sort(comparator);
+        return statistics;
     }
 
     @Override

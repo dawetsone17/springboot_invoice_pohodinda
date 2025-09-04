@@ -6,6 +6,8 @@ import cz.itnetwork.service.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Map;
@@ -23,8 +25,9 @@ public class InvoiceController {
     }
 
     @GetMapping
-    public List<InvoiceDTO> getInvoices(@RequestParam Map<String, String> filterParams) {
-        return invoiceService.getInvoices(filterParams);
+    public Page<InvoiceDTO> getInvoices(@RequestParam Map<String, String> filterParams, Pageable pageable) {
+        // Logika validace byla přesunuta do service vrstvy.
+        return invoiceService.getInvoices(filterParams, pageable);
     }
 
     @GetMapping("/{id}")

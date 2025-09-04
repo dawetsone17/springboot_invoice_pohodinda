@@ -9,6 +9,8 @@ import cz.itnetwork.entity.repository.InvoiceRepository;
 import cz.itnetwork.entity.repository.PersonRepository;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -59,27 +62,57 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<InvoiceDTO> getInvoices(Map<String, String> filterParams) {
+    public Page<InvoiceDTO> getInvoices(Map<String, String> filterParams, Pageable pageable) {
         Specification<InvoiceEntity> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            if (filterParams.get("minPrice") != null && !filterParams.get("minPrice").isEmpty()) {
-                long minPrice = Long.parseLong(filterParams.get("minPrice"));
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("price"), minPrice));
+            // Časový filtr - od data a do data
+            if (filterParams.containsKey("dateFrom") && !filterParams.get("dateFrom").isEmpty()) {
+                try {
+                    LocalDate dateFrom = LocalDate.parse(filterParams.get("dateFrom"));
+                    predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("issued"), dateFrom));
+                } catch (DateTimeParseException e) {
+                    logger.debug("Invalid dateFrom format: {}", filterParams.get("dateFrom"));
+                }
             }
-            if (filterParams.get("maxPrice") != null && !filterParams.get("maxPrice").isEmpty()) {
-                long maxPrice = Long.parseLong(filterParams.get("maxPrice"));
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("price"), maxPrice));
+
+            if (filterParams.containsKey("dateTo") && !filterParams.get("dateTo").isEmpty()) {
+                try {
+                    LocalDate dateTo = LocalDate.parse(filterParams.get("dateTo"));
+                    predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("issued"), dateTo));
+                } catch (DateTimeParseException e) {
+                    logger.debug("Invalid dateTo format: {}", filterParams.get("dateTo"));
+                }
             }
-            if (filterParams.get("buyerIdentificationNumber") != null && !filterParams.get("buyerIdentificationNumber").isEmpty()) {
+
+            // Ošetření záporných cen je v controlleru
+            if (filterParams.containsKey("minPrice") && !filterParams.get("minPrice").isEmpty()) {
+                try {
+                    double minPrice = Double.parseDouble(filterParams.get("minPrice"));
+                    predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("price"), minPrice));
+                } catch (NumberFormatException e) {
+                    logger.debug("Invalid minPrice format: {}", filterParams.get("minPrice"));
+                }
+            }
+
+            if (filterParams.containsKey("maxPrice") && !filterParams.get("maxPrice").isEmpty()) {
+                try {
+                    double maxPrice = Double.parseDouble(filterParams.get("maxPrice"));
+                    predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("price"), maxPrice));
+                } catch (NumberFormatException e) {
+                    logger.debug("Invalid maxPrice format: {}", filterParams.get("maxPrice"));
+                }
+            }
+
+            if (filterParams.containsKey("buyerIdentificationNumber") && !filterParams.get("buyerIdentificationNumber").isEmpty()) {
                 String buyerIN = filterParams.get("buyerIdentificationNumber");
                 predicates.add(criteriaBuilder.equal(root.get("buyer").get("identificationNumber"), buyerIN));
             }
-            if (filterParams.get("sellerIdentificationNumber") != null && !filterParams.get("sellerIdentificationNumber").isEmpty()) {
+            if (filterParams.containsKey("sellerIdentificationNumber") && !filterParams.get("sellerIdentificationNumber").isEmpty()) {
                 String sellerIN = filterParams.get("sellerIdentificationNumber");
                 predicates.add(criteriaBuilder.equal(root.get("seller").get("identificationNumber"), sellerIN));
             }
-            if (filterParams.get("product") != null && !filterParams.get("product").isEmpty()) {
+            if (filterParams.containsKey("product") && !filterParams.get("product").isEmpty()) {
                 String product = filterParams.get("product");
                 predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("product")), "%" + product.toLowerCase() + "%"));
             }
@@ -87,9 +120,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
 
-        return invoiceRepository.findAll(spec).stream()
-                .map(invoiceMapper::toDTO)
-                .collect(Collectors.toList());
+        return invoiceRepository.findAll(spec, pageable).map(invoiceMapper::toDTO);
     }
 
     @Override

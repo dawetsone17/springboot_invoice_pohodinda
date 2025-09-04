@@ -5,12 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data // Generuje gettery, settery, toString, equals a hashCode
-@AllArgsConstructor // Konstruktor se všemi poli
-@NoArgsConstructor  // Bezparametrický konstruktor
+@AllArgsConstructor // Generuje konstruktor se všemi poli
+@NoArgsConstructor  // Generuje bezparametrický konstruktor
 public class PersonStatisticsDTO {
 
-    private Long personId;       // Změněno z 'long' na 'Long'
-    private String personName;
+    private Long personId;
+    private String name;
     private long revenue;
     private long expenses;
 }

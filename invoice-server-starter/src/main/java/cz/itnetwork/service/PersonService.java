@@ -19,7 +19,8 @@ public interface PersonService {
 
     PersonDTO updatePerson(long personId, PersonDTO personDTO);
 
-    List<PersonStatisticsDTO> getPersonStatistics();
+    // Upravená signatura metody s parametry pro řazení
+    List<PersonStatisticsDTO> getPersonStatistics(String sortColumn, String sortDirection);
 
     List<InvoiceDTO> getSalesByPerson(String identificationNumber);
 

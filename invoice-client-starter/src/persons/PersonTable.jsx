@@ -8,7 +8,7 @@ const PersonTable = ({label, items, deletePerson}) => {
                 {label} {items.length}
             </p>
 
-            <table className="table table-bordered">
+            <table className="table table-striped">
                 <thead>
                 <tr>
                     <th>#</th>
@@ -51,9 +51,6 @@ const PersonTable = ({label, items, deletePerson}) => {
                 ))}
                 </tbody>
             </table>
-            <Link to={"/persons/create"} className="btn btn-success">
-                Nová osoba
-            </Link>
         </div>
     );
 };

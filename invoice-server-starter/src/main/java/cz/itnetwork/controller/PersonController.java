@@ -5,57 +5,57 @@ import cz.itnetwork.dto.PersonDTO;
 import cz.itnetwork.dto.PersonStatisticsDTO;
 import cz.itnetwork.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/persons")
 public class PersonController {
 
     @Autowired
     private PersonService personService;
 
-    // CRUD operace pro osoby
-    @PostMapping("/persons")
+    @PostMapping
     public PersonDTO addPerson(@RequestBody PersonDTO personDTO) {
-        return  personService.addPerson(personDTO);
+        return personService.addPerson(personDTO);
     }
 
-    @GetMapping("/persons")
-    public List<PersonDTO> getPersons() {
+    @GetMapping
+    public List<PersonDTO> getAllPersons() {
         return personService.getAll();
     }
 
-    @GetMapping("/persons/{personId}")
-    public PersonDTO getPerson(@PathVariable Long personId) {
-        return personService.getPersonById(personId);
+    @DeleteMapping("/{id}")
+    public void deletePerson(@PathVariable Long id) {
+        personService.removePerson(id);
     }
 
-    @PutMapping("/persons/{personId}")
-    public PersonDTO updatePerson(@PathVariable Long personId, @RequestBody PersonDTO personDTO) {
-        return personService.updatePerson(personId, personDTO);
+    @GetMapping("/{id}")
+    public PersonDTO getPersonById(@PathVariable Long id) {
+        return personService.getPersonById(id);
     }
 
-    @DeleteMapping("/persons/{personId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletePerson(@PathVariable Long personId) {
-        personService.removePerson(personId);
+    @PutMapping("/{id}")
+    public PersonDTO updatePerson(@PathVariable Long id, @RequestBody PersonDTO personDTO) {
+        return personService.updatePerson(id, personDTO);
     }
 
-    // Endpointy pro statistiky a vystavené/přijaté faktury
-    @GetMapping("/persons/statistics")
-    public List<PersonStatisticsDTO> getPersonStatistics() {
-        return personService.getPersonStatistics();
+    @GetMapping("/statistics")
+    public List<PersonStatisticsDTO> getPersonStatistics(
+            @RequestParam(defaultValue = "id") String sortColumn,
+            @RequestParam(defaultValue = "asc") String sortDirection) {
+        return personService.getPersonStatistics(sortColumn, sortDirection);
     }
 
-    @GetMapping("/identification/{identificationNumber}/sales")
+    // NOVÝ ENDPOINT pro vystavené faktury
+    @GetMapping("/{identificationNumber}/sales")
     public List<InvoiceDTO> getSalesByPerson(@PathVariable String identificationNumber) {
         return personService.getSalesByPerson(identificationNumber);
     }
 
-    @GetMapping("/identification/{identificationNumber}/purchases")
+    // NOVÝ ENDPOINT pro přijaté faktury
+    @GetMapping("/{identificationNumber}/purchases")
     public List<InvoiceDTO> getPurchasesByPerson(@PathVariable String identificationNumber) {
         return personService.getPurchasesByPerson(identificationNumber);
     }

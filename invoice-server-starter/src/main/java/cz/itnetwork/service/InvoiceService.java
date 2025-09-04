@@ -2,6 +2,8 @@ package cz.itnetwork.service;
 
 import cz.itnetwork.dto.InvoiceDTO;
 import cz.itnetwork.dto.InvoiceStatisticsDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Map;
@@ -14,9 +16,9 @@ public interface InvoiceService {
     InvoiceDTO addInvoice(InvoiceDTO invoiceDTO);
 
     /**
-     * Vrátí seznam všech faktur s volitelnými filtry.
+     * Vrátí seznam všech faktur s volitelnými filtry a paginací.
      */
-    List<InvoiceDTO> getInvoices(Map<String, String> filterParams);
+    Page<InvoiceDTO> getInvoices(Map<String, String> filterParams, Pageable pageable);
 
     /**
      * Vrátí detail faktury podle ID.

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { apiGet, apiPost, apiPut, apiDelete } from '../utils/api';
+import { apiGet, apiPost, apiPut } from '../utils/api';
 import '../index.css';
 
 const InvoiceForm = () => {
@@ -38,7 +38,6 @@ const InvoiceForm = () => {
                     // Režim úpravy: načtení dat existující faktury
                     const invoiceData = await apiGet(`/api/invoices/${id}`);
                     
-                    // Upravená část pro správné formátování data
                     const issuedDate = invoiceData.issued instanceof Array 
                         ? `${invoiceData.issued[0]}-${String(invoiceData.issued[1]).padStart(2, '0')}-${String(invoiceData.issued[2]).padStart(2, '0')}`
                         : invoiceData.issued;
@@ -169,178 +168,193 @@ const InvoiceForm = () => {
 
     return (
         <div className="invoice-form-container">
-            <h1>{id ? 'Úprava faktury' : 'Vytvoření faktury'}</h1>
-            <form onSubmit={handleSubmit} noValidate>
-                <div className="form-group">
-                    <label htmlFor="invoiceNumber">Číslo faktury (generuje se automaticky):</label>
-                    <input
-                        type="text"
-                        id="invoiceNumber"
-                        name="invoiceNumber"
-                        value={generatedInvoiceNumber}
-                        readOnly
-                        className="total-price-input"
-                    />
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <h1>{id ? 'Úprava faktury' : 'Vytvoření faktury'}</h1>
+                <div className="btn-group">
+                    <button onClick={() => navigate(-1)} className="btn btn-secondary me-2">Zpět</button>
+                    <button type="submit" onClick={handleSubmit} className="btn btn-primary">{id ? 'Uložit úpravy' : 'Vytvořit fakturu'}</button>
                 </div>
+            </div>
+            <hr />
+            
+            <div className="card">
+                <div className="card-body">
+                    <form onSubmit={handleSubmit} noValidate>
+                        <div className="form-group">
+                            <label htmlFor="invoiceNumber">Číslo faktury (generuje se automaticky):</label>
+                            <input
+                                type="text"
+                                id="invoiceNumber"
+                                name="invoiceNumber"
+                                value={generatedInvoiceNumber}
+                                readOnly
+                                className="total-price-input"
+                            />
+                        </div>
 
-                {/* Seller */}
-                <div className={`form-group ${formErrors.sellerId ? 'error' : ''}`}>
-                    <label htmlFor="sellerId">Prodávající *:</label>
-                    <select
-                        id="sellerId"
-                        name="sellerId"
-                        value={invoice.seller?.id || ''}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        required
-                    >
-                        <option value="">-- Vyberte prodávajícího --</option>
-                        {persons.map((person) => (
-                            <option key={person.id} value={person.id}>
-                                {person.name}
-                            </option>
-                        ))}
-                    </select>
-                    {formErrors.sellerId && (
-                        <div className="error-message">{formErrors.sellerId}</div>
-                    )}
+                        {/* Seller */}
+                        <div className={`form-group ${formErrors.sellerId ? 'error' : ''}`}>
+                            <label htmlFor="sellerId">Prodávající *:</label>
+                            <select
+                                id="sellerId"
+                                name="sellerId"
+                                value={invoice.seller?.id || ''}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                required
+                            >
+                                <option value="">-- Vyberte prodávajícího --</option>
+                                {persons.map((person) => (
+                                    <option key={person.id} value={person.id}>
+                                        {person.name}
+                                    </option>
+                                ))}
+                            </select>
+                            {formErrors.sellerId && (
+                                <div className="error-message">{formErrors.sellerId}</div>
+                            )}
+                        </div>
+
+                        {/* Buyer */}
+                        <div className={`form-group ${formErrors.buyerId ? 'error' : ''}`}>
+                            <label htmlFor="buyerId">Kupující *:</label>
+                            <select
+                                id="buyerId"
+                                name="buyerId"
+                                value={invoice.buyer?.id || ''}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                required
+                            >
+                                <option value="">-- Vyberte kupujícího --</option>
+                                {persons.map((person) => (
+                                    <option key={person.id} value={person.id}>
+                                        {person.name}
+                                    </option>
+                                ))}
+                            </select>
+                            {formErrors.buyerId && (
+                                <div className="error-message">{formErrors.buyerId}</div>
+                            )}
+                        </div>
+
+                        {/* Issued Date */}
+                        <div className={`form-group ${formErrors.issued ? 'error' : ''}`}>
+                            <label htmlFor="issued">Datum vystavení *:</label>
+                            <input
+                                type="date"
+                                id="issued"
+                                name="issued"
+                                value={invoice.issued || ''}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                required
+                            />
+                            {formErrors.issued && (
+                                <div className="error-message">{formErrors.issued}</div>
+                            )}
+                        </div>
+
+                        {/* Due Date */}
+                        <div className={`form-group ${formErrors.dueDate ? 'error' : ''}`}>
+                            <label htmlFor="dueDate">Datum splatnosti *:</label>
+                            <input
+                                type="date"
+                                id="dueDate"
+                                name="dueDate"
+                                value={invoice.dueDate || ''}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                required
+                            />
+                            {formErrors.dueDate && (
+                                <div className="error-message">{formErrors.dueDate}</div>
+                            )}
+                        </div>
+
+                        {/* Product */}
+                        <div className={`form-group ${formErrors.product ? 'error' : ''}`}>
+                            <label htmlFor="product">Produkt *:</label>
+                            <input
+                                type="text"
+                                id="product"
+                                name="product"
+                                value={invoice.product || ''}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                required
+                            />
+                            {formErrors.product && (
+                                <div className="error-message">{formErrors.product}</div>
+                            )}
+                        </div>
+
+                        {/* Price */}
+                        <div className={`form-group ${formErrors.price ? 'error' : ''}`}>
+                            <label htmlFor="price">Cena (bez DPH) *:</label>
+                            <input
+                                type="number"
+                                id="price"
+                                name="price"
+                                value={invoice.price || ''}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                required
+                            />
+                            {formErrors.price && (
+                                <div className="error-message">{formErrors.price}</div>
+                            )}
+                        </div>
+
+                        {/* VAT */}
+                        <div className={`form-group ${formErrors.vat ? 'error' : ''}`}>
+                            <label htmlFor="vat">DPH *:</label>
+                            <select
+                                id="vat"
+                                name="vat"
+                                value={invoice.vat || ''}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                required
+                            >
+                                <option value="">-- Vyberte sazbu DPH --</option>
+                                <option value="21">21 %</option>
+                                <option value="12">12 %</option>
+                            </select>
+                            {formErrors.vat && (
+                                <div className="error-message">{formErrors.vat}</div>
+                            )}
+                        </div>
+
+                        {/* Calculated values */}
+                        <div className="calculated-values">
+                            <p className="calculated-vat-amount">DPH: {vatAmount} Kč</p>
+                            <p className="calculated-total-price">Celková cena (s DPH): {totalPrice} Kč</p>
+                        </div>
+
+                        {/* Note */}
+                        <div className="form-group">
+                            <label htmlFor="note">Poznámka:</label>
+                            <textarea
+                                id="note"
+                                name="note"
+                                value={invoice.note || ''}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                            ></textarea>
+                        </div>
+
+                        <div className="required-fields-note">
+                            <p>* Povinná pole</p>
+                        </div>
+
+                        <div className="d-flex justify-content-end">
+                            <button type="button" onClick={() => navigate(-1)} className="btn btn-secondary me-2">Zpět</button>
+                            <button type="submit" className="btn btn-primary">{id ? 'Uložit úpravy' : 'Vytvořit fakturu'}</button>
+                        </div>
+                    </form>
                 </div>
-
-                {/* Buyer */}
-                <div className={`form-group ${formErrors.buyerId ? 'error' : ''}`}>
-                    <label htmlFor="buyerId">Kupující *:</label>
-                    <select
-                        id="buyerId"
-                        name="buyerId"
-                        value={invoice.buyer?.id || ''}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        required
-                    >
-                        <option value="">-- Vyberte kupujícího --</option>
-                        {persons.map((person) => (
-                            <option key={person.id} value={person.id}>
-                                {person.name}
-                            </option>
-                        ))}
-                    </select>
-                    {formErrors.buyerId && (
-                        <div className="error-message">{formErrors.buyerId}</div>
-                    )}
-                </div>
-
-                {/* Issued Date */}
-                <div className={`form-group ${formErrors.issued ? 'error' : ''}`}>
-                    <label htmlFor="issued">Datum vystavení *:</label>
-                    <input
-                        type="date"
-                        id="issued"
-                        name="issued"
-                        value={invoice.issued || ''}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        required
-                    />
-                    {formErrors.issued && (
-                        <div className="error-message">{formErrors.issued}</div>
-                    )}
-                </div>
-
-                {/* Due Date */}
-                <div className={`form-group ${formErrors.dueDate ? 'error' : ''}`}>
-                    <label htmlFor="dueDate">Datum splatnosti *:</label>
-                    <input
-                        type="date"
-                        id="dueDate"
-                        name="dueDate"
-                        value={invoice.dueDate || ''}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        required
-                    />
-                    {formErrors.dueDate && (
-                        <div className="error-message">{formErrors.dueDate}</div>
-                    )}
-                </div>
-
-                {/* Product */}
-                <div className={`form-group ${formErrors.product ? 'error' : ''}`}>
-                    <label htmlFor="product">Produkt *:</label>
-                    <input
-                        type="text"
-                        id="product"
-                        name="product"
-                        value={invoice.product || ''}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        required
-                    />
-                    {formErrors.product && (
-                        <div className="error-message">{formErrors.product}</div>
-                    )}
-                </div>
-
-                {/* Price */}
-                <div className={`form-group ${formErrors.price ? 'error' : ''}`}>
-                    <label htmlFor="price">Cena (bez DPH) *:</label>
-                    <input
-                        type="number"
-                        id="price"
-                        name="price"
-                        value={invoice.price || ''}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        required
-                    />
-                    {formErrors.price && (
-                        <div className="error-message">{formErrors.price}</div>
-                    )}
-                </div>
-
-                {/* VAT */}
-                <div className={`form-group ${formErrors.vat ? 'error' : ''}`}>
-                    <label htmlFor="vat">DPH *:</label>
-                    <select
-                        id="vat"
-                        name="vat"
-                        value={invoice.vat || ''}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        required
-                    >
-                        <option value="">-- Vyberte sazbu DPH --</option>
-                        <option value="21">21 %</option>
-                        <option value="12">12 %</option>
-                    </select>
-                    {formErrors.vat && (
-                        <div className="error-message">{formErrors.vat}</div>
-                    )}
-                </div>
-
-                {/* Calculated values */}
-                <div className="calculated-values">
-                    <p className="calculated-vat-amount">DPH: {vatAmount} Kč</p>
-                    <p className="calculated-total-price">Celková cena (s DPH): {totalPrice} Kč</p>
-                </div>
-
-                {/* Note */}
-                <div className="form-group">
-                    <label htmlFor="note">Poznámka:</label>
-                    <textarea
-                        id="note"
-                        name="note"
-                        value={invoice.note || ''}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                    ></textarea>
-                </div>
-
-                <div className="required-fields-note">
-                    <p>* Povinná pole</p>
-                </div>
-
-                <button type="submit">{id ? 'Uložit úpravy' : 'Vytvořit fakturu'}</button>
-            </form>
+            </div>
         </div>
     );
 };

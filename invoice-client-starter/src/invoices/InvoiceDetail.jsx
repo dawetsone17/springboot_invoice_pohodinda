@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import '../index.css';
+import { apiGet, apiDelete } from '../utils/api'; // Použití vašich API funkcí
 
 const InvoiceDetail = () => {
     const { id } = useParams();
@@ -11,11 +13,7 @@ const InvoiceDetail = () => {
     useEffect(() => {
         const fetchInvoice = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/invoices/${id}`);
-                if (!response.ok) {
-                    throw new Error('Faktura nebyla nalezena.');
-                }
-                const data = await response.json();
+                const data = await apiGet(`/api/invoices/${id}`);
                 setInvoice(data);
                 setError(null);
             } catch (err) {
@@ -27,15 +25,11 @@ const InvoiceDetail = () => {
         fetchInvoice();
     }, [id]);
 
-    const deleteInvoice = async () => {
+    const handleDelete = async () => {
         if (window.confirm('Opravdu chcete smazat tuto fakturu?')) {
             try {
-                const response = await fetch(`http://localhost:8080/api/invoices/${id}`, {
-                    method: 'DELETE',
-                });
-                if (!response.ok) {
-                    throw new Error('Nepodařilo se smazat fakturu.');
-                }
+                await apiDelete(`/api/invoices/${id}`);
+                alert('Faktura byla úspěšně smazána.');
                 navigate('/invoices');
             } catch (err) {
                 setError(err.message);
@@ -44,11 +38,11 @@ const InvoiceDetail = () => {
     };
 
     if (loading) {
-        return <div>Načítání...</div>;
+        return <div className="loading-container">Načítání...</div>;
     }
 
     if (error) {
-        return <div>Chyba: {error}</div>;
+        return <div className="error-container">Chyba: {error}</div>;
     }
 
     if (!invoice) {
@@ -56,12 +50,19 @@ const InvoiceDetail = () => {
     }
 
     return (
-        <div>
+        <div className="invoice-index-container">
             <h1>Detail faktury</h1>
             <hr />
+            
             <div className="card">
-                <div className="card-header">
+                {/* Tlačítka jsou přesunuta sem, do card-headeru */}
+                <div className="card-header d-flex justify-content-between align-items-center">
                     <h2>Faktura č. {invoice.invoiceNumber}</h2>
+                    <div>
+                        <button onClick={() => navigate(-1)} className="btn btn-secondary btn-sm me-2">Zpět</button>
+                        <Link to={`/invoices/edit/${invoice.id}`} className="btn btn-warning btn-sm me-2">Upravit</Link>
+                        <button onClick={handleDelete} className="btn btn-danger btn-sm">Smazat</button>
+                    </div>
                 </div>
                 <div className="card-body">
                     <p><strong>Produkt:</strong> {invoice.product}</p>
@@ -80,7 +81,6 @@ const InvoiceDetail = () => {
                             <h5>Prodávající</h5>
                         </div>
                         <div className="card-body">
-                            {/* Opraveno: Přidání detailů o prodávajícím */}
                             {invoice.seller ? (
                                 <>
                                     <p>
@@ -103,7 +103,6 @@ const InvoiceDetail = () => {
                             <h5>Kupující</h5>
                         </div>
                         <div className="card-body">
-                            {/* Opraveno: Přidání detailů o kupujícím */}
                             {invoice.buyer ? (
                                 <>
                                     <p>
@@ -120,11 +119,6 @@ const InvoiceDetail = () => {
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div className="mt-4">
-                <Link to={`/invoices/edit/${invoice.id}`} className="btn btn-warning">Upravit</Link>
-                <button onClick={deleteInvoice} className="btn btn-danger ms-2">Smazat</button>
             </div>
         </div>
     );
