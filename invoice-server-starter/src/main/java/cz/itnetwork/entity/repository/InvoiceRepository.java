@@ -52,8 +52,6 @@ public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long>, J
     Optional<Integer> findLastInvoiceNumberInMonth(String prefix);
 
 
-    // --- NOVÉ METODY PRO STATISTIKY ---
-
     /**
      * Spočítá celkovou sumu cen všech faktur v databázi.
      * Používá databázovou funkci SUM, aby se dotaz provedl efektivně.
