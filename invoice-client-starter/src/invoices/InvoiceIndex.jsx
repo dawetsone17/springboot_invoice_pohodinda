@@ -179,7 +179,6 @@ const InvoiceIndex = () => {
 
     return (
         <div className="invoice-index-container">
-            {/* Přesun tlačítka nahoru vedle nadpisu */}
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h1>Seznam faktur</h1>
                 <Link to="/invoices/new" className="btn btn-primary">Nová faktura</Link>
@@ -188,11 +187,13 @@ const InvoiceIndex = () => {
             <div className="statistics-container">
                 <h3>Statistiky</h3>
                 <div className="statistics-row">
-                    <p>Celkový součet faktur: <strong>{statistics.allTimeSum} Kč</strong></p>
-                    <p>Součet faktur za letošní rok: <strong>{statistics.currentYearSum} Kč</strong></p>
+                    <p>Celkový součet faktur: <strong>{statistics.allTimeSum.toLocaleString('cs-CZ')} Kč</strong></p>
+                    <p>Součet faktur za letošní rok: <strong>{statistics.currentYearSum.toLocaleString('cs-CZ')} Kč</strong></p>
                     <p>Celkový počet faktur: <strong>{statistics.invoicesCount}</strong></p>
                 </div>
             </div>
+
+
 
             <hr />
             <div className="filter-container">
@@ -300,7 +301,6 @@ const InvoiceIndex = () => {
             </div>
 
             <hr />
-            {/* Tlačítko pro vytvoření nové faktury bylo přesunuto výše */}
 
             <table className="table table-striped invoice-table">
                 <thead>
@@ -324,7 +324,7 @@ const InvoiceIndex = () => {
                             <td>{invoice.seller?.name}</td>
                             <td>{new Date(invoice.issued).toLocaleDateString()}</td>
                             <td>{new Date(invoice.dueDate).toLocaleDateString()}</td>
-                            <td>{invoice.price} Kč</td>
+                            <td>{invoice.price.toLocaleString('cs-CZ')} Kč</td>
                             <td className="action-buttons">
                                 <Link to={`/invoices/show/${invoice.id}`} className="btn btn-sm btn-info">Zobrazit</Link>
                                 <Link to={`/invoices/edit/${invoice.id}`} className="btn btn-sm btn-warning">Upravit</Link>

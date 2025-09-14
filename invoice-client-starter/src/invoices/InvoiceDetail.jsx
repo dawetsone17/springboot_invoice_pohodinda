@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import '../index.css';
-import { apiGet, apiDelete } from '../utils/api'; // Použití vašich API funkcí
+import { apiGet, apiDelete } from '../utils/api'; 
 
 const InvoiceDetail = () => {
     const { id } = useParams();
@@ -55,7 +55,6 @@ const InvoiceDetail = () => {
             <hr />
             
             <div className="card">
-                {/* Tlačítka jsou přesunuta sem, do card-headeru */}
                 <div className="card-header d-flex justify-content-between align-items-center">
                     <h2>Faktura č. {invoice.invoiceNumber}</h2>
                     <div>
@@ -66,7 +65,7 @@ const InvoiceDetail = () => {
                 </div>
                 <div className="card-body">
                     <p><strong>Produkt:</strong> {invoice.product}</p>
-                    <p><strong>Cena:</strong> {invoice.price} Kč</p>
+                    <p><strong>Cena:</strong> {invoice.price.toLocaleString('cs-CZ')} Kč</p>
                     <p><strong>DPH:</strong> {invoice.vat}%</p>
                     <p><strong>Datum vystavení:</strong> {new Date(invoice.issued).toLocaleDateString()}</p>
                     <p><strong>Datum splatnosti:</strong> {new Date(invoice.dueDate).toLocaleDateString()}</p>

@@ -26,7 +26,6 @@ public class InvoiceController {
 
     @GetMapping
     public Page<InvoiceDTO> getInvoices(@RequestParam Map<String, String> filterParams, Pageable pageable) {
-        // Logika validace byla přesunuta do service vrstvy.
         return invoiceService.getInvoices(filterParams, pageable);
     }
 

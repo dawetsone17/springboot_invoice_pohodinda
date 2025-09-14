@@ -43,7 +43,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Transactional
     public InvoiceDTO addInvoice(InvoiceDTO invoiceDTO) {
         if (invoiceDTO.getSeller() == null || invoiceDTO.getBuyer() == null) {
-            throw new IllegalArgumentException("Seller and Buyer must be provided.");
+            throw new IllegalArgumentException("Prodávající a kupující musí být uvedeni");
         }
 
         PersonEntity seller = personRepository.findById(invoiceDTO.getSeller().getId())

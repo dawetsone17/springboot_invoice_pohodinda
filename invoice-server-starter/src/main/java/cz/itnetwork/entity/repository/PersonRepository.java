@@ -17,7 +17,7 @@ public interface PersonRepository extends JpaRepository<PersonEntity, Long>, Jpa
     List<PersonEntity> findByHidden(boolean hidden);
 
     /**
-     * Vyhledá osobu podle jejího identifikačního čísla (IČO).
+     * vyhledá osobu podle jejího iča
      *
      * @param identificationNumber IČO osoby.
      * @return Optional s nalezenou osobou, nebo prázdný Optional, pokud osoba nebyla nalezena.
@@ -25,7 +25,7 @@ public interface PersonRepository extends JpaRepository<PersonEntity, Long>, Jpa
     Optional<PersonEntity> findByIdentificationNumber(String identificationNumber);
 
     /**
-     * Získá seznam osob, které nejsou skryté, a načte jejich prodeje a nákupy.
+     * získé seznam osob, které nejsou skryté, a načte jejich prodeje a nákupy.
      *
      * @param hidden Indikátor, zda má být osoba skrytá.
      * @return Seznam nalezených osob.

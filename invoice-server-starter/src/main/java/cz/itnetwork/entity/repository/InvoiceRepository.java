@@ -45,9 +45,7 @@ public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long>, J
     @Query("SELECT MAX(i.id) FROM InvoiceEntity i")
     Long findLastId();
 
-    // Tato metoda vrátí poslední pořadové číslo faktury pro daný rok a měsíc
-    // Query bere v úvahu, že číslo faktury má formát 'RRRRMMNNN...'
-    // a extrahuje z něj část s pořadovým číslem.
+    // vrátí poslední pořadové číslo faktury pro daný rok a měsíc
     @Query("SELECT MAX(CAST(SUBSTRING(i.invoiceNumber, 7) AS int)) FROM InvoiceEntity i WHERE i.invoiceNumber LIKE ?1")
     Optional<Integer> findLastInvoiceNumberInMonth(String prefix);
 

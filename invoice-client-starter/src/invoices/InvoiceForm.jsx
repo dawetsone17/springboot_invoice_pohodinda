@@ -55,7 +55,7 @@ const InvoiceForm = () => {
                     });
                     setGeneratedInvoiceNumber(invoiceData.invoiceNumber);
                 } else {
-                    // Režim vytváření: načtení nového čísla faktury
+                    // načtení nového čísla faktury
                     const newInvoiceNumber = await apiGet('/api/invoices/next-number');
                     setGeneratedInvoiceNumber(newInvoiceNumber);
                     setInvoice(prev => ({ ...prev, invoiceNumber: newInvoiceNumber }));
@@ -192,7 +192,7 @@ const InvoiceForm = () => {
                             />
                         </div>
 
-                        {/* Seller */}
+                        {/* Prodejce */}
                         <div className={`form-group ${formErrors.sellerId ? 'error' : ''}`}>
                             <label htmlFor="sellerId">Prodávající *:</label>
                             <select
@@ -215,7 +215,7 @@ const InvoiceForm = () => {
                             )}
                         </div>
 
-                        {/* Buyer */}
+                        {/* Kupující */}
                         <div className={`form-group ${formErrors.buyerId ? 'error' : ''}`}>
                             <label htmlFor="buyerId">Kupující *:</label>
                             <select
@@ -238,7 +238,7 @@ const InvoiceForm = () => {
                             )}
                         </div>
 
-                        {/* Issued Date */}
+                        {/* datum vydání */}
                         <div className={`form-group ${formErrors.issued ? 'error' : ''}`}>
                             <label htmlFor="issued">Datum vystavení *:</label>
                             <input
@@ -255,7 +255,7 @@ const InvoiceForm = () => {
                             )}
                         </div>
 
-                        {/* Due Date */}
+                        {/* datum splatnosti*/}
                         <div className={`form-group ${formErrors.dueDate ? 'error' : ''}`}>
                             <label htmlFor="dueDate">Datum splatnosti *:</label>
                             <input
@@ -272,7 +272,7 @@ const InvoiceForm = () => {
                             )}
                         </div>
 
-                        {/* Product */}
+                        {/* produkt */}
                         <div className={`form-group ${formErrors.product ? 'error' : ''}`}>
                             <label htmlFor="product">Produkt *:</label>
                             <input
@@ -289,7 +289,7 @@ const InvoiceForm = () => {
                             )}
                         </div>
 
-                        {/* Price */}
+                        {/* cena */}
                         <div className={`form-group ${formErrors.price ? 'error' : ''}`}>
                             <label htmlFor="price">Cena (bez DPH) *:</label>
                             <input
@@ -306,7 +306,7 @@ const InvoiceForm = () => {
                             )}
                         </div>
 
-                        {/* VAT */}
+                        {/* dph */}
                         <div className={`form-group ${formErrors.vat ? 'error' : ''}`}>
                             <label htmlFor="vat">DPH *:</label>
                             <select
@@ -326,13 +326,13 @@ const InvoiceForm = () => {
                             )}
                         </div>
 
-                        {/* Calculated values */}
+                        {/* výpočet ceny */}
                         <div className="calculated-values">
                             <p className="calculated-vat-amount">DPH: {vatAmount} Kč</p>
                             <p className="calculated-total-price">Celková cena (s DPH): {totalPrice} Kč</p>
                         </div>
 
-                        {/* Note */}
+                        {/* poznámka */}
                         <div className="form-group">
                             <label htmlFor="note">Poznámka:</label>
                             <textarea

@@ -106,7 +106,7 @@ const PersonIndex = () => {
                                 <th onClick={() => handleSort('name')} className={sort.column === 'name' ? 'active-sort' : ''}>Jméno/Název{getSortArrow('name')}</th>
                                 <th onClick={() => handleSort('revenue')} className={sort.column === 'revenue' ? 'active-sort' : ''}>Příjem (Kč){getSortArrow('revenue')}</th>
                                 <th onClick={() => handleSort('expenses')} className={sort.column === 'expenses' ? 'active-sort' : ''}>Výdaj (Kč){getSortArrow('expenses')}</th>
-                                <th>Akce k osobě</th> {/* OPRAVENO: Nový název sloupce */}
+                                <th>Akce k osobě</th> 
                             </tr>
                         </thead>
                         <tbody>
@@ -117,8 +117,8 @@ const PersonIndex = () => {
                                     <td>
                                         <Link to={`/persons/show/${person.id}`}>{person.name}</Link>
                                     </td>
-                                    <td>{person.revenue} Kč</td>
-                                    <td>{person.expenses} Kč</td>
+                                    <td>{person.revenue.toLocaleString('cs-CZ')} Kč</td>
+                                    <td>{person.expenses.toLocaleString('cs-CZ')} Kč</td>
                                     <td>
                                         <div className="btn-group">
                                             <Link
@@ -150,7 +150,7 @@ const PersonIndex = () => {
             
             <hr />
 
-            {/* Původní PersonTable je nyní odstraněn */}
+            
             
         </div>
     );

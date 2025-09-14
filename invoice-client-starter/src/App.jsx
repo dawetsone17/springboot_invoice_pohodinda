@@ -55,7 +55,7 @@ export function App() {
           <Route path="/persons">
             <Route index element={<PersonIndex />} />
             <Route path="show/:id" element={<PersonDetail />} />
-            <Route path="new" element={<PersonForm />} /> {/* OPRAVENO: Přidána správná cesta pro formulář */}
+            <Route path="new" element={<PersonForm />} /> 
             <Route path="edit/:id" element={<PersonForm />} />
           </Route>
           

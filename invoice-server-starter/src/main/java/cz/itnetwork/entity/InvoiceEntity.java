@@ -16,7 +16,6 @@ public class InvoiceEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Opraveno: z int na String kvůli formátu F00001, F00002...
     private String invoiceNumber;
 
     @ManyToOne

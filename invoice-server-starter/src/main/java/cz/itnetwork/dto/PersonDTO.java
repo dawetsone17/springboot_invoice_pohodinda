@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PersonDTO {
 
-    // Upraveno: Odstraněna anotace @JsonProperty
     private Long id;
 
     private String name;

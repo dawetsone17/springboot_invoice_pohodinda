@@ -9,7 +9,7 @@ const PersonDetail = () => {
     const [person, setPerson] = useState(null);
     const [salesInvoices, setSalesInvoices] = useState([]);
     const [purchasesInvoices, setPurchasesInvoices] = useState([]);
-    const [statistics, setStatistics] = useState(null); // Nový stav pro statistiky
+    const [statistics, setStatistics] = useState(null); 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -112,7 +112,6 @@ const PersonDetail = () => {
                 <p><strong>Poznámka:</strong> {person.note}</p>
             </div>
 
-            {/* Zde je nová sekce se statistikami */}
             <hr className="my-4" style={{borderColor: '#ccc'}}/>
             
             {statistics && (
@@ -120,10 +119,10 @@ const PersonDetail = () => {
                     <h3>Statistiky</h3>
                     <div className="d-flex justify-content-start align-items-center flex-wrap">
                         <div className="me-5">
-                            <strong>Celkový příjem:</strong> <span className="text-success">{statistics.revenue || 0} Kč</span>
+                            <strong>Celkový příjem:</strong> <span className="text-success">{statistics.revenue.toLocaleString('cs-CZ') || 0} Kč</span>
                         </div>
                         <div>
-                            <strong>Celkové výdaje:</strong> <span className="text-danger">{statistics.expenses || 0} Kč</span>
+                            <strong>Celkové výdaje:</strong> <span className="text-danger">{statistics.expenses.toLocaleString('cs-CZ') || 0} Kč</span>
                         </div>
                     </div>
                 </div>
@@ -153,7 +152,7 @@ const PersonDetail = () => {
                                         </Link>
                                     ) : ('Neznámý kupující')}
                                 </td>
-                                <td>{invoice.price} Kč</td>
+                                <td>{invoice.price.toLocaleString('cs-CZ')} Kč</td>
                                 <td>
                                     <Link to={`/invoices/show/${invoice.id}`}>Zobrazit</Link>
                                 </td>
@@ -187,7 +186,7 @@ const PersonDetail = () => {
                                         </Link>
                                     ) : ('Neznámý prodávající')}
                                 </td>
-                                <td>{invoice.price} Kč</td>
+                                <td>{invoice.price.toLocaleString('cs-CZ')} Kč</td>
                                 <td>
                                     <Link to={`/invoices/show/${invoice.id}`}>Zobrazit</Link>
                                 </td>

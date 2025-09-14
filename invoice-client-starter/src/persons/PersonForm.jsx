@@ -143,7 +143,6 @@ const PersonForm = () => {
             <div className="card">
                 <div className="card-body">
                     <form onSubmit={handleSubmit} noValidate>
-                        {/* Jméno */}
                         <div className={`form-group ${formErrors.name ? 'error' : ''}`}>
                             <label htmlFor="name">Jméno *:</label>
                             <input
@@ -162,7 +161,6 @@ const PersonForm = () => {
                             )}
                         </div>
 
-                        {/* IČO */}
                         <div className={`form-group ${formErrors.identificationNumber ? 'error' : ''}`}>
                             <label htmlFor="identificationNumber">IČO *:</label>
                             <input
@@ -182,7 +180,7 @@ const PersonForm = () => {
                             )}
                         </div>
 
-                        {/* DIČ */}
+
                         <div className={`form-group ${formErrors.taxNumber ? 'error' : ''}`}>
                             <label htmlFor="taxNumber">DIČ *:</label>
                             <input
@@ -202,7 +200,7 @@ const PersonForm = () => {
                             )}
                         </div>
 
-                        {/* Číslo bankovního účtu a Kód banky */}
+
                         <div className="form-group-inline">
                             <label>Číslo účtu a kód banky *:</label>
                             <div className="form-group-row">
@@ -244,7 +242,7 @@ const PersonForm = () => {
                             </div>
                         </div>
 
-                        {/* IBAN */}
+
                         <div className={`form-group ${formErrors.iban ? 'error' : ''}`}>
                             <label htmlFor="iban">IBAN *:</label>
                             <input
@@ -263,7 +261,7 @@ const PersonForm = () => {
                             )}
                         </div>
 
-                        {/* Telefon */}
+                        
                         <div className={`form-group ${formErrors.telephone ? 'error' : ''}`}>
                             <label htmlFor="telephone">Telefon *:</label>
                             <input
@@ -282,7 +280,7 @@ const PersonForm = () => {
                             )}
                         </div>
 
-                        {/* Mail */}
+                        
                         <div className={`form-group ${formErrors.mail ? 'error' : ''}`}>
                             <label htmlFor="mail">E-mail *:</label>
                             <input
@@ -301,7 +299,7 @@ const PersonForm = () => {
                             )}
                         </div>
 
-                        {/* Ulice */}
+                       
                         <div className={`form-group ${formErrors.street ? 'error' : ''}`}>
                             <label htmlFor="street">Ulice *:</label>
                             <input
@@ -320,7 +318,7 @@ const PersonForm = () => {
                             )}
                         </div>
 
-                        {/* PSČ */}
+                       
                         <div className={`form-group ${formErrors.zip ? 'error' : ''}`}>
                             <label htmlFor="zip">PSČ *:</label>
                             <input
@@ -339,7 +337,7 @@ const PersonForm = () => {
                             )}
                         </div>
 
-                        {/* Město */}
+                        
                         <div className={`form-group ${formErrors.city ? 'error' : ''}`}>
                             <label htmlFor="city">Město *:</label>
                             <input
@@ -358,7 +356,7 @@ const PersonForm = () => {
                             )}
                         </div>
 
-                        {/* Země */}
+                        
                         <div className={`form-group ${formErrors.country ? 'error' : ''}`}>
                             <label htmlFor="country">Země *:</label>
                             <select
@@ -380,7 +378,7 @@ const PersonForm = () => {
                             )}
                         </div>
 
-                        {/* Poznámka */}
+                        
                         <div className="form-group">
                             <label htmlFor="note">Poznámka:</label>
                             <textarea
